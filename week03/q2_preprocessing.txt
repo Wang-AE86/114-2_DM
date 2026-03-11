@@ -1,0 +1,44 @@
+姓名：王智弘
+學號：C113181148
+
+=== 原始資料與遺漏值統計 ===
+（貼上原始資料的 print 結果和遺漏值統計）
+df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 10 entries, 0 to 9
+Data columns (total 4 columns):
+ #   Column       Non-Null Count  Dtype  
+---  ------       --------------  -----  
+ 0   water_temp   8 non-null      float64
+ 1   salinity     8 non-null      float64
+ 2   wave_height  8 non-null      float64
+ 3   wind_speed   8 non-null      float64
+dtypes: float64(4)
+memory usage: 452.0 bytes
+
+
+=== 完整程式碼 ===
+（貼上你撰寫的完整 Python 程式碼）
+from sklearn.pipeline import make_pipeline
+num_pl = make_pipeline(SimpleImputer(strategy='mean'),
+                       StandardScaler())
+num_pl.fit_transform(X_num)
+
+=== Pipeline 處理後的資料 ===
+（貼上 Pipeline 轉換後的 DataFrame）
+array([[-0.76650126,  0.61568879, -1.6542329 , -1.81967556],
+       [ 0.14194468,  0.        ,  0.73521462,  1.66590016],
+       [ 0.        , -1.17540586, -0.55141097, -0.17940463],
+       [ 1.05039061,  1.95900977,  0.        ,  0.58947236],
+       [-0.31227829, -0.7276322 ,  1.83803656,  0.        ],
+       [ 0.        ,  0.16791512, -0.18380366, -1.05079856],
+       [-1.56139145,  0.        , -1.10282193,  0.17940463],
+       [ 0.4826119 ,  1.06346245,  0.        ,  1.35834936],
+       [ 2.07239229, -1.62317953,  1.28662559,  0.        ],
+       [-1.10716848, -0.27985854, -0.36760731, -0.74324776]])
+
+
+=== 標準化驗證 ===
+（貼上每個欄位的平均值和標準差，確認平均值接近 0、標準差接近 1）
+si.statistics_
+array([27.175 , 34.0625,  2.1   , 18.85  ])
