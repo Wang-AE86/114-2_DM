@@ -24,94 +24,108 @@
 
 ### 課堂範例：乳癌資料 KNN 分類 + 標準化影響
 
-```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import classification_report, accuracy_score
+**Cell 1：匯入套件 + 載入資料 + 標準化比較**
 
-# === 載入資料 ===
-data = load_breast_cancer()
-X = pd.DataFrame(data.data, columns=data.feature_names)
-y = data.target
+```python
+# 匯入需要的套件
+import numpy as np                                  # 數學運算
+import pandas as pd                                 # 表格資料處理
+import matplotlib.pyplot as plt                     # 繪圖
+from sklearn.datasets import load_breast_cancer     # 內建乳癌資料集（569 筆, 30 個特徵）
+from sklearn.model_selection import train_test_split  # 資料切割
+from sklearn.neighbors import KNeighborsClassifier  # KNN 模型
+from sklearn.preprocessing import StandardScaler    # 標準化
+from sklearn.pipeline import Pipeline               # 管道器
+from sklearn.metrics import classification_report, accuracy_score  # 評估指標
+
+# === 載入乳癌資料集 ===
+data = load_breast_cancer()                                        # sklearn 內建資料集
+X = pd.DataFrame(data.data, columns=data.feature_names)            # 30 個特徵（腫瘤測量值）
+y = data.target                                                    # 目標：0=惡性, 1=良性
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# === 比較：有無標準化 ===
-# 不標準化
-knn_raw = KNeighborsClassifier(n_neighbors=5)
+# === 比較：有無標準化對 KNN 的影響 ===
+# 方法 1：不標準化，直接用原始數值
+knn_raw = KNeighborsClassifier(n_neighbors=5)   # K=5 的 KNN
 knn_raw.fit(X_train, y_train)
 acc_raw = accuracy_score(y_test, knn_raw.predict(X_test))
 
-# 有標準化（Pipeline）
+# 方法 2：有標準化（用 Pipeline 串接 StandardScaler + KNN）
 pipe_knn = Pipeline([
-    ('scaler', StandardScaler()),
-    ('knn', KNeighborsClassifier(n_neighbors=5))
+    ('scaler', StandardScaler()),                # 先標準化（平均=0, 標準差=1）
+    ('knn', KNeighborsClassifier(n_neighbors=5)) # 再跑 KNN
 ])
 pipe_knn.fit(X_train, y_train)
 acc_scaled = accuracy_score(y_test, pipe_knn.predict(X_test))
 
+# 標準化後通常更好，因為 KNN 靠距離判斷，量級不同會讓大數值特徵主宰距離
 print(f'不標準化 KNN 準確率：{acc_raw:.4f}')
 print(f'有標準化 KNN 準確率：{acc_scaled:.4f}')
 print(f'差異：{acc_scaled - acc_raw:+.4f}')
+```
 
-# === K 值選擇：測試 K=1~20 ===
-k_range = range(1, 21)
+**Cell 2：K 值選擇（K=1~20 測試）**
+
+```python
+# === 測試不同 K 值，找出最佳 K ===
+k_range = range(1, 21)     # 測試 K=1 到 K=20
 scores = []
 for k in k_range:
     pipe = Pipeline([('scaler', StandardScaler()), ('knn', KNeighborsClassifier(n_neighbors=k))])
     pipe.fit(X_train, y_train)
-    scores.append(pipe.score(X_test, y_test))
+    scores.append(pipe.score(X_test, y_test))   # 記錄每個 K 值的準確率
 
+# 畫圖：K 值 vs 準確率
 plt.figure(figsize=(8, 4))
-plt.plot(k_range, scores, 'bo-')
+plt.plot(k_range, scores, 'bo-')    # 藍色圓點連線
 plt.xlabel('K 值')
 plt.ylabel('準確率')
 plt.title('KNN：K 值 vs 準確率')
-plt.xticks(k_range)
+plt.xticks(k_range)                 # X 軸顯示每個 K 值
 plt.grid(True, alpha=0.3)
 plt.show()
 
-best_k = list(k_range)[np.argmax(scores)]
+# 找出最佳 K 值
+best_k = list(k_range)[np.argmax(scores)]   # argmax = 找最大值的索引
 print(f'\n最佳 K 值：{best_k}，準確率：{max(scores):.4f}')
 ```
 
 ### PCA 降維示範
 
-```python
-from sklearn.decomposition import PCA
+**Cell 3：PCA 降維 + 準確率比較 + 2D 視覺化**
 
-# === 原始 30 維 vs PCA 降到 2 維 ===
+```python
+from sklearn.decomposition import PCA   # PCA 主成分分析（降維工具）
+
+# === 比較：原始 30 維 vs PCA 降到 2 維 ===
+# 用全部 30 個特徵的 KNN
 pipe_full = Pipeline([('scaler', StandardScaler()), ('knn', KNeighborsClassifier(n_neighbors=5))])
 pipe_full.fit(X_train, y_train)
 
+# 用 PCA 降到 2 維再跑 KNN（Pipeline 串接三步驟）
 pipe_pca = Pipeline([
-    ('scaler', StandardScaler()),
-    ('pca', PCA(n_components=2)),
-    ('knn', KNeighborsClassifier(n_neighbors=5))
+    ('scaler', StandardScaler()),           # 第一步：標準化
+    ('pca', PCA(n_components=2)),           # 第二步：30 維 → 2 維
+    ('knn', KNeighborsClassifier(n_neighbors=5))  # 第三步：KNN 分類
 ])
 pipe_pca.fit(X_train, y_train)
 
 print(f'原始 30 維 KNN：{pipe_full.score(X_test, y_test):.4f}')
 print(f'PCA 2 維 KNN： {pipe_pca.score(X_test, y_test):.4f}')
 
-# === PCA 2D 視覺化 ===
+# === PCA 2D 散佈圖：把 30 維資料壓到 2 維來觀察分布 ===
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+X_scaled = scaler.fit_transform(X)      # 先標準化全部資料
 pca = PCA(n_components=2)
-X_pca = pca.fit_transform(X_scaled)
+X_pca = pca.fit_transform(X_scaled)     # 降到 2 維
 
 plt.figure(figsize=(8, 6))
 scatter = plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='RdYlBu', alpha=0.6)
-plt.xlabel(f'PC1（解釋 {pca.explained_variance_ratio_[0]:.1%} 變異）')
-plt.ylabel(f'PC2（解釋 {pca.explained_variance_ratio_[1]:.1%} 變異）')
+plt.xlabel(f'PC1（解釋 {pca.explained_variance_ratio_[0]:.1%} 變異）')  # 第一主成分
+plt.ylabel(f'PC2（解釋 {pca.explained_variance_ratio_[1]:.1%} 變異）')  # 第二主成分
 plt.title('PCA 降維後的乳癌資料分布')
-plt.colorbar(scatter, label='0=惡性  1=良性')
+plt.colorbar(scatter, label='0=惡性  1=良性')   # 顏色條：紅=惡性, 藍=良性
 plt.grid(True, alpha=0.3)
 plt.show()
 ```
@@ -139,11 +153,13 @@ plt.show()
 
 ### 課堂範例：鐵達尼號 SVM 分類
 
+**Cell 4：載入 Titanic 資料 + SVM 核函數比較**
+
 ```python
-from sklearn.svm import SVC
+from sklearn.svm import SVC   # 支持向量機分類器
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 
-# === 載入 Titanic 資料 ===
+# === 載入鐵達尼號資料 ===
 # 線上載入
 url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
 titanic = pd.read_csv(url)
@@ -151,13 +167,14 @@ titanic = pd.read_csv(url)
 # titanic = pd.read_csv('data/titanic.csv')
 titanic = titanic[['Survived', 'Pclass', 'Age', 'Fare', 'SibSp']].dropna()
 
-X = titanic[['Pclass', 'Age', 'Fare', 'SibSp']]
-y = titanic['Survived']
+X = titanic[['Pclass', 'Age', 'Fare', 'SibSp']]   # 4 個特徵
+y = titanic['Survived']                              # 目標：存活與否
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# === 比較不同核函數 ===
+# === 比較不同核函數：linear（線性）vs rbf（高斯）===
 kernels = ['linear', 'rbf']
 for kernel in kernels:
+    # Pipeline：先標準化 → 再跑 SVM（SVM 對特徵量級敏感，必須標準化）
     pipe = Pipeline([('scaler', StandardScaler()), ('svm', SVC(kernel=kernel, random_state=42))])
     pipe.fit(X_train, y_train)
     y_pred = pipe.predict(X_test)
@@ -165,8 +182,14 @@ for kernel in kernels:
     print(f'\n=== SVM kernel={kernel} ===')
     print(f'準確率：{acc:.4f}')
     print(classification_report(y_test, y_pred))
+```
 
-# === C 值對準確率的影響 ===
+**Cell 5：C 值對準確率的影響**
+
+```python
+# === C 值實驗：C 控制「容許多少錯誤」===
+# C 大 → 嚴格分類，盡量不犯錯（可能過擬合）
+# C 小 → 容許一些錯誤，邊界更平滑（可能欠擬合）
 C_values = [0.01, 0.1, 1, 10, 100]
 results_c = []
 for c in C_values:
@@ -175,9 +198,10 @@ for c in C_values:
     results_c.append(pipe.score(X_test, y_test))
     print(f'C={c:>6}  準確率：{results_c[-1]:.4f}')
 
+# 畫圖：C 值 vs 準確率
 plt.figure(figsize=(8, 4))
-plt.plot(C_values, results_c, 'ro-')
-plt.xscale('log')
+plt.plot(C_values, results_c, 'ro-')       # 紅色圓點連線
+plt.xscale('log')                          # X 軸用對數刻度（因為 C 值差距大）
 plt.xlabel('C（log scale）')
 plt.ylabel('準確率')
 plt.title('SVM：C 值 vs 準確率')
@@ -205,32 +229,40 @@ plt.show()
 
 ### 課堂範例：鐵達尼號決策樹 + 過擬合控制
 
+**Cell 6：決策樹 — 過擬合控制 + 視覺化**
+
 ```python
-from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.tree import DecisionTreeClassifier, plot_tree   # 決策樹 + 樹狀圖繪製
 
-# === 用 Titanic 資料（延續主題 2）===
+# === 用 Titanic 資料（延續 Cell 4 的 X_train, y_train）===
 
-# 不限制深度 vs 限制深度
+# 模型 A：不限制深度（容易過擬合，會「背答案」）
 dt_full = DecisionTreeClassifier(random_state=42)
 dt_full.fit(X_train, y_train)
 
+# 模型 B：限制深度（max_depth=3，最多問 3 個問題就要做決定）
 dt_pruned = DecisionTreeClassifier(max_depth=3, min_samples_leaf=10, random_state=42)
 dt_pruned.fit(X_train, y_train)
 
+# 比較：不限制深度 → 訓練接近 100% 但測試差 = 過擬合
 print('=== 不限制深度 ===')
-print(f'訓練準確率：{dt_full.score(X_train, y_train):.4f}')
-print(f'測試準確率：{dt_full.score(X_test, y_test):.4f}')
+print(f'訓練準確率：{dt_full.score(X_train, y_train):.4f}')    # 應該接近 1.0
+print(f'測試準確率：{dt_full.score(X_test, y_test):.4f}')      # 會比訓練差很多
 print(f'樹深度：{dt_full.get_depth()}，葉節點數：{dt_full.get_n_leaves()}')
 
 print('\n=== 限制深度（max_depth=3）===')
-print(f'訓練準確率：{dt_pruned.score(X_train, y_train):.4f}')
-print(f'測試準確率：{dt_pruned.score(X_test, y_test):.4f}')
+print(f'訓練準確率：{dt_pruned.score(X_train, y_train):.4f}')  # 比上面低
+print(f'測試準確率：{dt_pruned.score(X_test, y_test):.4f}')    # 但測試集表現更穩定
 print(f'樹深度：{dt_pruned.get_depth()}，葉節點數：{dt_pruned.get_n_leaves()}')
 
-# === 視覺化決策樹 ===
+# === 視覺化決策樹（限制深度的版本）===
 plt.figure(figsize=(16, 8))
-plot_tree(dt_pruned, feature_names=X.columns, class_names=['Dead', 'Survived'],
-          filled=True, rounded=True, fontsize=10)
+plot_tree(dt_pruned,
+          feature_names=X.columns,              # 顯示特徵名稱
+          class_names=['Dead', 'Survived'],      # 顯示類別名稱
+          filled=True,                           # 用顏色深淺表示純度
+          rounded=True,                          # 圓角方框
+          fontsize=10)
 plt.title('決策樹（max_depth=3）')
 plt.tight_layout()
 plt.show()
@@ -238,18 +270,23 @@ plt.show()
 
 ### 特徵重要性
 
+**Cell 7：特徵重要性**
+
 ```python
-# === 特徵重要性 ===
+# === 特徵重要性：決策樹可以告訴你哪個特徵最有用 ===
+# feature_importances_ 加總 = 1.0，數值越大代表該特徵對分類越重要
 importances = pd.Series(dt_pruned.feature_importances_, index=X.columns).sort_values(ascending=True)
 
+# 水平長條圖：由下到上，最重要的特徵在最上方
 plt.figure(figsize=(8, 4))
-importances.plot(kind='barh', color='steelblue')
+importances.plot(kind='barh', color='steelblue')   # barh = 水平長條圖
 plt.xlabel('重要性')
 plt.title('決策樹：特徵重要性排名')
 plt.grid(True, alpha=0.3, axis='x')
 plt.tight_layout()
 plt.show()
 
+# 印出數值
 print('各特徵重要性：')
 for feat, imp in importances.sort_values(ascending=False).items():
     print(f'  {feat}: {imp:.4f}')
@@ -257,19 +294,24 @@ for feat, imp in importances.sort_values(ascending=False).items():
 
 ### 三種模型比較總整理
 
+**Cell 8：三模型比較總整理**
+
 ```python
-# === W8 三模型比較 ===
+# === 同一份 Titanic 資料，比較本週學的三種模型 ===
+# 注意：KNN 和 SVM 需要標準化，決策樹不需要
 models = {
     'KNN (K=5)': Pipeline([('scaler', StandardScaler()), ('clf', KNeighborsClassifier(n_neighbors=5))]),
     'SVM (rbf)': Pipeline([('scaler', StandardScaler()), ('clf', SVC(random_state=42))]),
     'Decision Tree': Pipeline([('clf', DecisionTreeClassifier(max_depth=3, random_state=42))]),
 }
 
+# 逐一訓練並比較
+# 「差距」= 訓練準確率 - 測試準確率，差距越大代表越可能過擬合
 print('=== 三模型比較（Titanic）===')
 for name, pipe in models.items():
     pipe.fit(X_train, y_train)
-    train_acc = pipe.score(X_train, y_train)
-    test_acc = pipe.score(X_test, y_test)
+    train_acc = pipe.score(X_train, y_train)    # 訓練集準確率
+    test_acc = pipe.score(X_test, y_test)       # 測試集準確率
     print(f'{name:20s}  訓練：{train_acc:.4f}  測試：{test_acc:.4f}  差距：{train_acc-test_acc:+.4f}')
 ```
 

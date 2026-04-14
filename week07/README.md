@@ -29,22 +29,23 @@
 **Cell 1：匯入套件與建立資料**
 
 ```python
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score, mean_squared_error
+# 匯入需要的套件
+import numpy as np                        # 數學運算（亂數、開根號等）
+import pandas as pd                       # 表格資料處理
+import matplotlib.pyplot as plt           # 繪圖
+from sklearn.linear_model import LinearRegression       # 線性迴歸模型
+from sklearn.model_selection import train_test_split    # 資料切割（訓練集/測試集）
+from sklearn.metrics import r2_score, mean_squared_error  # 評估指標（R²、MSE）
 
 # === 建立範例資料：廣告花費 vs 銷售額 ===
-np.random.seed(42)
-ad_spend = np.random.uniform(10, 100, 50)  # 廣告花費（萬元）
-sales = 2.5 * ad_spend + np.random.normal(0, 15, 50) + 30  # 銷售額（萬元）
-df = pd.DataFrame({'ad_spend': ad_spend, 'sales': sales})
+np.random.seed(42)                                      # 固定亂數種子，確保每次結果一樣
+ad_spend = np.random.uniform(10, 100, 50)               # 隨機產生 50 筆廣告花費（10~100 萬元）
+sales = 2.5 * ad_spend + np.random.normal(0, 15, 50) + 30  # 銷售額 = 2.5×廣告 + 雜訊 + 基礎值
+df = pd.DataFrame({'ad_spend': ad_spend, 'sales': sales})   # 組成 DataFrame 表格
 
-# === 資料切割 ===
-X = df[['ad_spend']]
-y = df['sales']
+# === 資料切割：70% 訓練、30% 測試 ===
+X = df[['ad_spend']]    # 特徵（用雙括號保持二維格式，sklearn 要求）
+y = df['sales']          # 目標值
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 print(f'訓練集：{X_train.shape[0]} 筆，測試集：{X_test.shape[0]} 筆')
 ```
@@ -52,19 +53,22 @@ print(f'訓練集：{X_train.shape[0]} 筆，測試集：{X_test.shape[0]} 筆')
 **Cell 2：訓練模型 + 預測 + 評估**
 
 ```python
-# === 訓練模型 ===
-model = LinearRegression()
-model.fit(X_train, y_train)
+# === 建立並訓練線性迴歸模型 ===
+model = LinearRegression()        # 建立模型物件
+model.fit(X_train, y_train)       # 用訓練資料擬合模型（找出最佳的斜率和截距）
 
-print(f'斜率 (coefficient): {model.coef_[0]:.4f}')
-print(f'截距 (intercept):   {model.intercept_:.4f}')
+# 印出模型學到的參數
+print(f'斜率 (coefficient): {model.coef_[0]:.4f}')      # 斜率：X 每增加 1，Y 增加多少
+print(f'截距 (intercept):   {model.intercept_:.4f}')     # 截距：X=0 時 Y 的值
 print(f'迴歸公式：sales = {model.coef_[0]:.2f} × ad_spend + {model.intercept_:.2f}')
 
-# === 預測 ===
-y_pred_train = model.predict(X_train)
-y_pred_test = model.predict(X_test)
+# === 用模型預測訓練集和測試集 ===
+y_pred_train = model.predict(X_train)   # 預測訓練集的銷售額
+y_pred_test = model.predict(X_test)     # 預測測試集的銷售額
 
-# === 評估 ===
+# === 評估模型表現 ===
+# R²（決定係數）：0~1，越接近 1 表示模型越好，代表模型解釋了多少比例的變異
+# RMSE（均方根誤差）：數值越小越好，代表預測值和實際值的平均偏差
 print(f'\n訓練 R²: {r2_score(y_train, y_pred_train):.4f}')
 print(f'測試 R²: {r2_score(y_test, y_pred_test):.4f}')
 print(f'訓練 RMSE: {np.sqrt(mean_squared_error(y_train, y_pred_train)):.4f}')
@@ -74,16 +78,18 @@ print(f'測試 RMSE: {np.sqrt(mean_squared_error(y_test, y_pred_test)):.4f}')
 **Cell 3：視覺化**
 
 ```python
-plt.figure(figsize=(8, 5))
-plt.scatter(X_test, y_test, color='blue', label='Actual')
-# 排序後畫線，避免鋸齒
-sort_idx = X_test.values.flatten().argsort()
-plt.plot(X_test.values.flatten()[sort_idx], y_pred_test[sort_idx], color='red', linewidth=2, label='Predicted')
-plt.xlabel('Ad Spend (萬元)')
-plt.ylabel('Sales (萬元)')
+# === 視覺化：散佈圖 + 迴歸線 ===
+plt.figure(figsize=(8, 5))                          # 設定圖片大小
+plt.scatter(X_test, y_test, color='blue', label='Actual')   # 藍點 = 實際值
+# 排序後畫線，避免線條鋸齒（因為 X_test 的順序是隨機的）
+sort_idx = X_test.values.flatten().argsort()         # 取得由小到大的排序索引
+plt.plot(X_test.values.flatten()[sort_idx], y_pred_test[sort_idx],
+         color='red', linewidth=2, label='Predicted')  # 紅線 = 預測值
+plt.xlabel('Ad Spend (萬元)')       # X 軸標籤
+plt.ylabel('Sales (萬元)')          # Y 軸標籤
 plt.title('簡單線性迴歸：廣告花費 vs 銷售額')
-plt.legend()
-plt.grid(True, alpha=0.3)
+plt.legend()                        # 顯示圖例
+plt.grid(True, alpha=0.3)           # 顯示網格線（透明度 30%）
 plt.show()
 ```
 
@@ -110,21 +116,23 @@ plt.show()
 **Cell 4：建立多管道資料**
 
 ```python
-# === 擴展資料：三個廣告管道 ===
+# === 建立模擬資料：三個廣告管道 → 銷售額 ===
 np.random.seed(42)
-n = 100
+n = 100   # 100 筆資料
 df_multi = pd.DataFrame({
-    'tv_spend': np.random.uniform(10, 300, n),
-    'radio_spend': np.random.uniform(5, 50, n),
-    'web_spend': np.random.uniform(1, 80, n),
+    'tv_spend': np.random.uniform(10, 300, n),    # 電視廣告花費（10~300 萬）
+    'radio_spend': np.random.uniform(5, 50, n),   # 廣播廣告花費（5~50 萬）
+    'web_spend': np.random.uniform(1, 80, n),     # 網路廣告花費（1~80 萬）
 })
+# 銷售額 = 各管道的加權總和 + 雜訊 + 基礎值
 df_multi['sales'] = (
-    0.05 * df_multi['tv_spend'] +
-    0.1 * df_multi['radio_spend'] +
-    0.08 * df_multi['web_spend'] +
-    np.random.normal(0, 2, n) + 5
+    0.05 * df_multi['tv_spend'] +      # 電視每花 1 萬 → 銷售增加 0.05 萬
+    0.1 * df_multi['radio_spend'] +     # 廣播每花 1 萬 → 銷售增加 0.1 萬
+    0.08 * df_multi['web_spend'] +      # 網路每花 1 萬 → 銷售增加 0.08 萬
+    np.random.normal(0, 2, n) + 5       # 雜訊 + 基礎銷售額
 )
 
+# 設定特徵（3 個管道）和目標（銷售額）
 X = df_multi[['tv_spend', 'radio_spend', 'web_spend']]
 y = df_multi['sales']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -134,21 +142,24 @@ print(f'資料筆數：{n}，特徵數：{X.shape[1]}')
 **Cell 5：簡單 vs 多元迴歸比較**
 
 ```python
-# === 簡單迴歸（只用 tv_spend）===
+# === 簡單迴歸：只用 tv_spend 一個特徵 ===
 lr_simple = LinearRegression()
-lr_simple.fit(X_train[['tv_spend']], y_train)
-r2_simple = r2_score(y_test, lr_simple.predict(X_test[['tv_spend']]))
+lr_simple.fit(X_train[['tv_spend']], y_train)                          # 只用電視廣告訓練
+r2_simple = r2_score(y_test, lr_simple.predict(X_test[['tv_spend']]))  # 計算測試 R²
 
-# === 多元迴歸（三個管道全用）===
+# === 多元迴歸：三個管道全部使用 ===
 lr_multi = LinearRegression()
-lr_multi.fit(X_train, y_train)
-r2_multi = r2_score(y_test, lr_multi.predict(X_test))
+lr_multi.fit(X_train, y_train)                              # 用全部 3 個特徵訓練
+r2_multi = r2_score(y_test, lr_multi.predict(X_test))       # 計算測試 R²
 
+# 比較結果：多元迴歸的 R² 應該比簡單迴歸高
 print('=== 簡單迴歸（只用 tv_spend）===')
 print(f'測試 R²: {r2_simple:.4f}')
 
 print('\n=== 多元迴歸（三管道）===')
 print(f'測試 R²: {r2_multi:.4f}')
+
+# 印出每個特徵的迴歸係數（代表該特徵對銷售的影響力）
 print(f'\n各特徵迴歸係數：')
 for name, coef in zip(X.columns, lr_multi.coef_):
     print(f'  {name}: {coef:.4f}')
@@ -179,40 +190,44 @@ print(f'  截距: {lr_multi.intercept_:.4f}')
 **Cell 6：載入 Titanic 資料 + 訓練羅吉斯迴歸**
 
 ```python
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
+# 匯入羅吉斯迴歸相關套件
+from sklearn.linear_model import LogisticRegression       # 羅吉斯迴歸（分類用）
+from sklearn.preprocessing import StandardScaler          # 標準化（讓特徵量級一致）
+from sklearn.pipeline import Pipeline                     # 管道器（串接多個步驟）
 from sklearn.metrics import (classification_report, confusion_matrix,
-                             ConfusionMatrixDisplay, roc_curve, auc)
+                             ConfusionMatrixDisplay, roc_curve, auc)  # 分類評估工具
 
-# === 載入 Titanic 資料 ===
-# 線上載入
+# === 載入鐵達尼號資料 ===
+# 線上載入（從 GitHub 下載 CSV）
 url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
 titanic = pd.read_csv(url)
 # 若網路不通，改用離線備份：
 # titanic = pd.read_csv('data/titanic.csv')
 
-# 選取特徵並處理
+# 只選需要的欄位，並移除有遺漏值的列
+# Survived=是否存活, Pclass=艙等, Age=年齡, Fare=票價, SibSp=同行兄弟姊妹/配偶數
 titanic = titanic[['Survived', 'Pclass', 'Age', 'Fare', 'SibSp']].dropna()
-X = titanic[['Pclass', 'Age', 'Fare', 'SibSp']]
-y = titanic['Survived']
+X = titanic[['Pclass', 'Age', 'Fare', 'SibSp']]   # 4 個特徵
+y = titanic['Survived']                              # 目標：0=死亡, 1=存活
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# === 建立 Pipeline：標準化 + 羅吉斯迴歸 ===
+# === 建立 Pipeline：標準化 → 羅吉斯迴歸 ===
+# Pipeline 會自動依序執行：先標準化，再訓練模型
 pipe = Pipeline([
-    ('scaler', StandardScaler()),
-    ('lr', LogisticRegression(random_state=42))
+    ('scaler', StandardScaler()),              # 第一步：將特徵標準化（平均=0, 標準差=1）
+    ('lr', LogisticRegression(random_state=42))  # 第二步：羅吉斯迴歸
 ])
-pipe.fit(X_train, y_train)
-y_pred = pipe.predict(X_test)
+pipe.fit(X_train, y_train)       # 訓練（標準化 + 擬合模型一步完成）
+y_pred = pipe.predict(X_test)    # 預測測試集
 
-# === 迴歸係數 ===
+# === 印出各特徵的迴歸係數 ===
+# 正值 = 增加存活機率，負值 = 降低存活機率
 print('=== 各特徵迴歸係數（標準化後）===')
 for name, coef in zip(X.columns, pipe.named_steps['lr'].coef_[0]):
     print(f'  {name}: {coef:.4f}')
 
-# === 分類報告 ===
+# === 分類報告：精確率、召回率、F1 ===
 print('\n=== Classification Report ===')
 print(classification_report(y_test, y_pred))
 ```
@@ -220,29 +235,30 @@ print(classification_report(y_test, y_pred))
 **Cell 7：混淆矩陣 + ROC 曲線**
 
 ```python
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+# === 視覺化：混淆矩陣（左）+ ROC 曲線（右）===
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))   # 建立 1×2 的子圖
 
-# 混淆矩陣
+# 左圖：混淆矩陣（顯示 TP/TN/FP/FN 四格數字）
 ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=axes[0])
 axes[0].set_title('Confusion Matrix')
 
-# ROC 曲線
-y_prob = pipe.predict_proba(X_test)[:, 1]
-fpr, tpr, _ = roc_curve(y_test, y_prob)
-roc_auc = auc(fpr, tpr)
+# 右圖：ROC 曲線（評估分類模型的整體表現）
+y_prob = pipe.predict_proba(X_test)[:, 1]   # 取得每筆資料「存活」的機率
+fpr, tpr, _ = roc_curve(y_test, y_prob)     # 計算不同門檻值下的 FPR 和 TPR
+roc_auc = auc(fpr, tpr)                     # 計算曲線下面積（AUC）
 
 axes[1].plot(fpr, tpr, color='blue', linewidth=2, label=f'AUC = {roc_auc:.3f}')
-axes[1].plot([0, 1], [0, 1], 'k--', linewidth=1)
-axes[1].set_xlabel('False Positive Rate')
-axes[1].set_ylabel('True Positive Rate')
+axes[1].plot([0, 1], [0, 1], 'k--', linewidth=1)   # 對角虛線 = 隨機猜測的基準線
+axes[1].set_xlabel('False Positive Rate')    # X 軸：誤報率
+axes[1].set_ylabel('True Positive Rate')     # Y 軸：正確預測率
 axes[1].set_title('ROC Curve')
 axes[1].legend()
 axes[1].grid(True, alpha=0.3)
 
-plt.tight_layout()
+plt.tight_layout()   # 自動調整子圖間距
 plt.show()
 
-print(f'\nAUC = {roc_auc:.3f}')
+print(f'\nAUC = {roc_auc:.3f}')   # AUC：0.5=隨機, 0.7-0.8=可接受, 0.8-0.9=好, >0.9=很好
 ```
 
 ### 課堂重點提問
