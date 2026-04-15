@@ -1,29 +1,13 @@
-# 第 8 週｜迴歸分析：線性迴歸與羅吉斯迴歸 + 小考 1
-
-> **注意**：第 7 週放假（清明連假補假），本週教第 7 週內容。
-> 教學主題請參照 [week07/README.md](../week07/README.md)。
-> 本頁下方的 KNN/SVM/決策樹教材為預備內容，順延至後續週次使用。
+# 第 8 週｜KNN、SVM 與決策樹
 
 ## 週次資訊
 
 | 項目 | 說明 |
 |------|------|
 | 日期 | 4/15（三）09:10–12:00 |
-| 本週教學 | Ch4 簡單線性迴歸、Ch5 多元迴歸、Ch6 羅吉斯迴歸（→ [week07/README.md](../week07/README.md)） |
-| 小考 1 | Ch0 ~ Ch3（Python 語法、Pandas 操作、資料預處理）10 題選擇題 |
-| 本週作業 | week07 作業（迴歸分析，→ [week07/README.md](../week07/README.md)） |
-| 作業資料集 | `data/Ship_Performance_Dataset.csv`（船舶營運績效資料，全學期共用） |
-
----
-
-# 預備教材：KNN、SVM 與決策樹（順延至後續週次）
-
-## 預備教材資訊
-
-| 項目 | 說明 |
-|------|------|
 | 對應教科書 | Ch7 K 最近鄰、Ch8 支持向量機、Ch9 決策樹 |
 | Colab 程式 | [Ch7 KNN](https://colab.research.google.com/drive/1r6TRIRFWD5UmP8KTMWZaeo8W66b1LMPz)、[Ch8 SVM](https://colab.research.google.com/drive/1ZXKuUxTmRIaQcd6OVRtcNlKw3E0fB041)、[Ch9 Decision Tree](https://colab.research.google.com/drive/1TBS0721z22BuJbkuKQ9nwtaZh1G-jH8n) |
+| 作業資料集 | `data/Ship_Performance_Dataset.csv`（船舶營運績效資料，全學期共用） |
 
 ---
 
