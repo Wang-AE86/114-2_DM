@@ -1,7 +1,8 @@
-# 第 10 週｜分類模板、交叉驗證與網格搜尋 + AI-RED 框架介紹
+# 第 10 週｜分類模板、交叉驗證與網格搜尋 + 三大 AI 工具速覽
 
 > 對應教科書：Ch10 分類模板、Ch11 交叉驗證、Ch12 網格搜尋
-> 進度：期中考後第一週，本週起導入 **AI-RED 框架**作為 AI 輔助學習的核心工具
+> 進度：期中考後第一週，本週起在課堂建立**三大 AI 工具**（ChatGPT / Claude / Gemini）的基本認識
+> 進階：「怎麼用 AI 才不會被 AI 帶歪」見 [補充教材：AI-RED 五階段框架](../extras/ai-red-framework.md)（學期後半段回來深入）
 
 ---
 
@@ -10,7 +11,7 @@
 1. 看懂並改寫分類預測的標準流程（資料前處理 → 切分 → 模型訓練 → 預測 → 評估）
 2. 用 K-Fold 交叉驗證評估模型穩定性，避免單次切分誤差
 3. 用 `GridSearchCV` 自動找最佳超參數組合
-4. **認識 AI-RED 五階段框架，並在本週作業中各完成一次練習**
+4. **認識 ChatGPT / Claude / Gemini 三家旗艦 AI 工具的差異，能依任務挑選合適的工具**
 
 ---
 
@@ -75,53 +76,77 @@ Colab：[12 模型參數挑選和網格搜尋](https://colab.research.google.com
 
 ---
 
-## 二、AI-RED 框架介紹
+## 二、三大 AI 工具速覽：ChatGPT / Claude / Gemini
 
-> 出處：**陳育詮（松山高中）**「Build AI Critical Radar with AI-RED Framework」（數位時代）。
-> 本課程將此框架從高中端**操作化**並導入大學資料探勘課程，**本週為首次實施**。
+> 課程後半段三家工具會頻繁在課堂與作業中出現。先建立基本認識，再決定何時用哪一家。
 
-研究顯示（Shen & Tamkin 2026），把 AI 當「直接寫答案的工具」會損害學習成效；當作「幫你思考的對話夥伴」才能保留學習。**AI-RED 是把這個原則變成可執行檢核的具體框架**。
+### 為什麼要認識三家？
 
-### AI-RED 五階段速覽卡（A4 一頁）
+不同任務、不同價格策略、不同模態能力——**用錯工具**會降低學習效率，甚至卡住整個作業。本週先做工具地圖，後續再談「怎麼用才不會被 AI 帶歪」（→ 補充教材）。
 
-| 階段 | 全名 | 關鍵動作 | 對抗的壞習慣 |
+### 三家對照表
+
+| 項目 | **ChatGPT**（OpenAI）| **Claude**（Anthropic）| **Gemini**（Google）|
 |---|---|---|---|
-| **A** | **A**scribe（標示出處）| 在貼上 AI 內容前，先寫「我用了 ___（AI 名稱+版本），任務是 ___」 | 完全委託、把 AI 答案當自己的 |
-| **I** | **I**nquire（概念提問）| 不直接要程式碼，先問「為什麼這樣寫」「如果改成 X 會怎樣」 | 只要答案、不要理解 |
-| **R** | **R**eference（查證對抗幻覺）| AI 給的函式/參數/論文/資料源 → **去官方文件或 sklearn API doc 驗證** | 相信 AI 的所有輸出 |
-| **E** | **E**valuate（先理解再使用）| 用自己一句話重述 AI 的解釋，再決定要不要用這段 code | 逐字抄寫、盲目修改 |
-| **D** | **D**ocument（記錄對話）| 把 prompt + AI 回應 + 你的判斷貼進作業 markdown | 對話用完就丟 |
+| 旗艦模型 | GPT-5 | Claude Opus 4.7 / Sonnet 4.6 | Gemini 2.5 Pro |
+| 免費版 | 有限額度（GPT-5 mini）| 有限額度（Sonnet 4.6）| 額度大方（2.5 Flash）|
+| 強項 | 通用對話、生態系最廣 | 程式撰寫、長文閱讀、推理 | 多模態（圖像/影片）、Google 服務整合 |
+| 弱項 | 數學易錯、會幻覺 | 預設無上網（要開 Web Search 工具）| 中文偶爾跳英文、上下文一致性較弱 |
+| IDE 整合 | Copilot / Cursor | Cursor / Windsurf / Claude Code | Gemini Code Assist |
+| 課程適用場景 | 通用查詢、概念解釋 | sklearn code 解釋、文件閱讀 | Colab 整合查詢、視覺化建議 |
+| 取用方式 | chat.openai.com | claude.ai | gemini.google.com |
 
-### 一個踩雷的真實案例（R 階段為什麼必要）
+### 直覺判斷流程
 
-老師我自己在寫 SAR 海洋油污論文時，請 AI 幫忙整理 50 篇文獻的 DOI（Digital Object Identifier，論文唯一識別碼）。AI 給了一份漂亮的清單。**結果其中 14 篇 DOI 是錯的，錯誤率 28%**——AI 「幻覺」(hallucination) 出了**根本不存在的 DOI**。如果直接送投稿期刊，整篇論文會被退稿。
-
-修正方法是逐筆去 CrossRef API 查證（這就是 R = Reference 的精神）。本學期後半段會教你們用 Python 自動做這件事。但**這週起，請先把「AI 給的任何東西都要去原始來源驗證」當成肌肉記憶**。
-
----
-
-## 三、本週課堂演練（30 min AI-RED demo）
-
-老師會在課堂上做一次完整 demo：
-1. **故意**用 ChatGPT 寫一段 sklearn 分類流程的 code（含 3 處小錯）
-2. 全班用 **R**（查 sklearn 官方文件）和 **E**（自己讀過再決定要不要用）抓出 3 處錯
-3. 對照 **A**（標示來源）和 **D**（紀錄對話）的標準寫法
-
-→ 這份 demo 的對話會放在本週作業 issue，作為 A/D 階段的範例。
-
----
-
-## 四、課後作業（5 題對應 A/I/R/E/D 各一階段）
-
-繳交方式：fork 114-2_DM repo → 在你個人 fork 的 `homework/week10/` 建一個 markdown，回答以下 5 題，提交 Pull Request
-
-| # | 階段 | 題目 |
+| 任務 | 第一選擇 | 理由 |
 |---|---|---|
-| 1 | **A**scribe | 寫一段 100 字的「AI 使用聲明」：你本週做作業會用哪個 AI（ChatGPT / Claude / Copilot / 其他）？哪個版本？你打算讓它幫你做什麼、不讓它做什麼？ |
-| 2 | **I**nquire | 不問「給我一個 GridSearchCV 範例」，改問「為什麼 GridSearchCV 預設用 5-fold？fold 數對結果的影響是什麼？」把你的問題、AI 的回答、你的後續追問貼上 |
-| 3 | **R**eference | 對照上面 AI 的回答，到 [sklearn 官方文件](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html) 查證「`cv` 參數的預設值是什麼」「文件怎麼描述 fold 數的選擇」。**有沒有發現 AI 寫錯或不精確的地方？指出來** |
-| 4 | **E**valuate | 用你**自己的話**重述「為什麼要用交叉驗證而不是單次 train/test split」（最多 150 字、不要貼 AI 的話）。然後判斷：你會把上面 AI 給的 code 直接貼進你的作業嗎？為什麼會 / 為什麼不會？ |
-| 5 | **D**ocument | 把第 1–4 題的所有 AI 對話**完整截圖**或貼成 markdown 程式碼區塊，標明時間順序，作為附件 |
+| 寫 / 改 sklearn code | **Claude** | 程式碼解釋穩定、長文不掉細節 |
+| 看截圖、影片、圖像 | **Gemini** | 多模態能力強、Google 服務整合 |
+| 一般概念解釋、不確定哪個好 | **ChatGPT** | 生態系最廣、模型熟悉度高 |
+
+### 課堂提示
+
+| # | 提示 |
+|---|---|
+| 1 | 課堂上老師會用 **Claude.ai** 做 sklearn demo，因為程式碼解釋最穩定 |
+| 2 | 期末做題建議**同一 prompt 在三家比對**，挑出最合理的回答 |
+| 3 | ⚠️ 不要把作業整題貼給 AI 讓它直接回答——違反學術倫理且學不到東西 |
+| 4 | ⚠️ AI 說的具體事實（函式名、參數、論文 DOI）**都要回原始來源驗證**（→ 補充教材會詳述） |
+
+> **進階主題**：「AI 什麼時候會胡說？怎麼系統化驗證？」
+> 見 [補充教材：AI-RED 五階段框架](../extras/ai-red-framework.md)（學期後半段回來深入）
+
+---
+
+## 三、本週課堂演練（20 min · 同一 prompt 三家比對）
+
+老師會在課堂上做一次三家 AI 比對 demo：
+
+1. **同一個 prompt** 同時打到 ChatGPT / Claude / Gemini：
+   ```
+   寫一個 KNN 分類 + GridSearchCV 找最佳 n_neighbors 的 sklearn code，
+   用 iris 資料集，並解釋為什麼要用 StandardScaler
+   ```
+2. 觀察三家回答：
+   - 哪家解釋最清楚？
+   - 哪家 code 最完整（有 import 嗎？有資料切分嗎？）？
+   - 哪家解釋了 StandardScaler 的必要性？
+3. 全班討論：以後寫 sklearn code 你會優先選哪一家？為什麼？
+
+→ Demo 對話會貼到本週 issue 作為作業範例
+
+---
+
+## 四、課後作業（4 題 · 三家 AI 工具實戰比對）
+
+繳交方式：fork 114-2_DM repo → 在你個人 fork 的 `homework/week10/` 建一個 markdown，回答以下 4 題，提交 Pull Request
+
+| # | 題目 |
+|---|---|
+| 1 | 你目前最常用哪一家 AI（ChatGPT / Claude / Gemini）？為什麼？（100 字） |
+| 2 | 用同一個 prompt（自己設計，與本週 Ch10/11/12 內容相關）打到三家 AI，把三份回答完整貼上 |
+| 3 | 比較三家回答：哪家最準確？哪家最易讀？哪家有錯？指出**具體**不同點（至少 3 點） |
+| 4 | 做完這次比對後，未來會調整你選擇 AI 的策略嗎？怎麼調整？（100 字內） |
 
 繳交期限：下週上課前
 
@@ -134,25 +159,16 @@ Colab：[12 模型參數挑選和網格搜尋](https://colab.research.google.com
 | 分類模板 | `train_test_split → fit → predict → evaluate` 五步驟 |
 | K-Fold 交叉驗證 | 切 K 份輪流當測試集，取平均分數比較穩 |
 | GridSearchCV | 暴力枚舉所有超參數組合 + 交叉驗證 = 最佳組合 |
-| AI-RED | **A**scribe / **I**nquire / **R**eference / **E**valuate / **D**ocument |
-| 為什麼要 AI-RED | 沒有它 → 學了 AI 反而學不到課業；有它 → AI 幫你思考而不是替你思考 |
+| 三家 AI 工具 | ChatGPT 廣 / Claude 寫 code 強 / Gemini 多模態 |
+| 用 AI 的最低限度 | 同一 prompt 三家比對，挑最合理的回答 |
 
 ---
 
-## 六、AI-RED 卡（可下載印出貼桌前）
+## 六、延伸學習（補充教材）
 
-```
-┌────────────────────────────────────────────────┐
-│  AI-RED  使用 AI 的五個自我檢核                │
-├────────────────────────────────────────────────┤
-│  A  Ascribe   我用了哪個 AI？任務是什麼？      │
-│  I  Inquire   我有先問「為什麼」嗎？           │
-│  R  Reference 我有去原始來源查證嗎？           │
-│  E  Evaluate  我能用自己的話重述嗎？           │
-│  D  Document  我有記錄對話過程嗎？             │
-└────────────────────────────────────────────────┘
-```
+- 📖 [AI-RED 五階段框架——AI 使用的進階檢核](../extras/ai-red-framework.md)
+  > 「怎麼用 AI 才不會被 AI 帶歪」的系統化框架。本週**不在課堂講**，但建議自行讀過一次，建立批判使用 AI 的習慣。學期後半段會回來做一次完整實作。
 
 ---
 
-*本週是課程後半的轉折點，從這週起每次作業都會要求你跑過一輪 AI-RED。下週起進入組合預測器（Ch13），請先熟悉本週三個 Colab。*
+*下週起進入組合預測器（Ch13），請先熟悉本週三個 Colab。*
