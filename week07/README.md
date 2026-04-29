@@ -5,7 +5,7 @@
 | 項目 | 說明 |
 |------|------|
 | 對應教科書 | Ch4 簡單線性迴歸、Ch5 多元迴歸、Ch6 羅吉斯迴歸 |
-| 日期 | 4/9（三）09:10–12:00 |
+| 日期 | 4/8（三）09:10–12:00 |
 | Colab 程式 | [Ch4](https://colab.research.google.com/drive/18nr_4pOkjzvs-5uJoPWfKW5cU97KH0qP)、[Ch5](https://colab.research.google.com/drive/1iXifxI-AoJlkVMravR5rXP_2pDn8yYtS)、[Ch6](https://colab.research.google.com/drive/1gaq4UpvRb4CXUrgt_k6lJhMUAsakd1Ly) |
 | 作業資料集 | `data/Ship_Performance_Dataset.csv`（船舶營運績效資料，全學期共用） |
 

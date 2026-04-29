@@ -119,11 +119,7 @@
 - 教學內容：人類如何看見海底？用科技探索看不見的海底世界
 - 作業：上課心得
 
-### 第 7 週｜放假（清明連假補假）
-
-- 原定內容（迴歸分析 + 小考 1）順延至第 8 週
-
-### 第 8 週｜迴歸分析：線性迴歸與羅吉斯迴歸 + **小考 1**
+### 第 7 週｜迴歸分析：線性迴歸與羅吉斯迴歸 + **小考 1**
 
 - 對應教科書：Ch4 簡單線性迴歸、Ch5 多元迴歸、Ch6 羅吉斯迴歸
 - Colab 程式：[4 簡單線性迴歸](https://colab.research.google.com/drive/18nr_4pOkjzvs-5uJoPWfKW5cU97KH0qP?usp=sharing)、[5 多元線性迴歸](https://colab.research.google.com/drive/1iXifxI-AoJlkVMravR5rXP_2pDn8yYtS?usp=sharing)、[6 羅吉斯迴歸](https://colab.research.google.com/drive/1gaq4UpvRb4CXUrgt_k6lJhMUAsakd1Ly?usp=sharing)
@@ -131,6 +127,14 @@
   - LinearRegression、PolynomialFeatures、多元迴歸
   - 羅吉斯迴歸、混淆矩陣、ROC 曲線與 AUC
 - **小考 1**：Ch0 ~ Ch3（Python 語法、Pandas 操作、資料預處理）10 題選擇題
+
+### 第 8 週｜KNN、SVM 與決策樹
+
+- 對應教科書：Ch7 K 最近鄰、Ch8 支持向量機、Ch9 決策樹
+- Colab 程式：[7 KNN](https://colab.research.google.com/drive/1r6TRIRFWD5UmP8KTMWZaeo8W66b1LMPz)、[8 SVM](https://colab.research.google.com/drive/1ZXKuUxTmRIaQcd6OVRtcNlKw3E0fB041)、[9 決策樹](https://colab.research.google.com/drive/1TBS0721z22BuJbkuKQ9nwtaZh1G-jH8n)
+- 教學內容：
+  - KNeighborsClassifier、SVC、DecisionTreeClassifier
+  - KNN 標準化與 K 值選擇、SVM C/gamma 參數、決策樹過擬合控制
 
 ### 第 9 週｜期中考
 
@@ -232,7 +236,7 @@
 
 | 次數 | 週次 | 範圍 | 涵蓋章節 |
 |------|------|------|---------|
-| 小考 1 | 第 8 週（原第 7 週放假順延） | Python 語法、Pandas 操作、資料預處理 | Ch0 ~ Ch3 |
+| 小考 1 | 第 7 週 | Python 語法、Pandas 操作、資料預處理 | Ch0 ~ Ch3 |
 | 小考 2 | 第 11 週 | 迴歸、分類演算法、交叉驗證、網格搜尋、組合預測器 | Ch4 ~ Ch13 |
 | 小考 3 | 第 14 週 | 不均衡資料處理、文字處理、K-Means | Ch14 ~ Ch20 |
 | 小考 4 | 第 15 週 | K-Means、深度學習 | Ch20 ~ Ch21 |
