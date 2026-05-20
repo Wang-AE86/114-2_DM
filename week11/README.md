@@ -1,8 +1,8 @@
 # 第 11 週｜組合預測器 + AI 輔助模型選擇
 
-> 上課日期：2026/05/06（W11，週三 09:10–12:00）
-> 對應教科書：Ch13 組合預測器
-> Sup Material [PPT](https://colab.research.google.com/drive/1iUh3CxSCpC2AvcsxSpwLI40bRHIcp8gK?usp=sharing)
+> 上課日期：2026/05/06（W11，週三 09:10–12:00） <BR>
+> 對應教科書：Ch13 組合預測器 <BR>
+> Sup Material [PPT](https://colab.research.google.com/drive/1iUh3CxSCpC2AvcsxSpwLI40bRHIcp8gK?usp=sharing) <BR>
 > Colab 程式：[13 整合預測器 ensemble](https://colab.research.google.com/drive/1iUh3CxSCpC2AvcsxSpwLI40bRHIcp8gK?usp=sharing)
 > 小考 2：Ch4 ~ Ch13（迴歸、分類演算法、交叉驗證、網格搜尋、組合預測器）
 
