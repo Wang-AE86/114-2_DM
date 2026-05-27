@@ -19,8 +19,37 @@ sns.heatmap(df.corr(numeric_only=True).round(2), annot=True, cmap='coolwarm');
 - annot=True: 在熱力圖的每個單元格中顯示相關係數的數值。
 - cmap='coolwarm': 設定熱力圖的顏色映射。'coolwarm' 是一種常見的色譜，通常用於表示正相關（暖色）和負相關（冷色），並且中間色表示接近零的相關性。
 ## Error02
-
+這個錯誤 ValueError: could not convert string to float: 'sales' 表示 corrwith() 方法嘗試將非數值型的 'sales' 欄位（以及其他非數值型欄位，例如 'salary'）轉換為浮點數來計算相關性，但這是不可能的。相關性計算只能針對數值型資料執行。為了修正這個問題，我會修改程式碼，確保在計算相關性之前，只選取資料框中的數值型欄位。
 ```
 # df.drop('left', axis=1).corrwith(df['left']).round(2)
 df.drop('left', axis=1).select_dtypes(include=np.number).corrwith(df['left']).round(2)
 ```
+這段程式碼計算並顯示了資料集中所有數值型特徵與目標變數 left（是否離職）之間的相關係數，並且結果四捨五入到小數點後兩位。
+
+這些相關係數的意義是：
+
+- satisfaction_level (滿意度): -0.39 - 呈現負相關，表示員工滿意度越低，離職的可能性越高。
+- last_evaluation (上次考評): 0.01 - 相關性非常弱，幾乎沒有線性關係。
+- number_project (專案數量): 0.02 - 相關性非常弱，幾乎沒有線性關係。
+- average_montly_hours (平均月工時): 0.07 - 相關性非常弱，幾乎沒有線性關係。
+- time_spend_company (在公司待的時間): 0.14 - 呈現弱的正相關，表示在公司待的時間越長，離職的可能性稍高（這可能需要進一步分析，例如考慮過長時間工作等因素）。
+- Work_accident (工作事故): -0.15 - 呈現弱的負相關，表示發生工作事故的員工離職的可能性略低。
+- promotion_last_5years (近5年是否晉升): -0.06 - 呈現弱的負相關，表示近5年有晉升的員工離職的可能性略低。
+總體來看，satisfaction_level 與離職率有最強的負相關，意味著員工滿意度是影響離職與否的重要因素。其他數值型特徵與離職率的線性相關性較弱。
+## Error 03
+
+```
+# print('正確率：', accuracy_score(y_test, y_pred).round(2))
+print('正確率：', round(accuracy_score(y_test, y_pred), 2))
+
+```
+## Error 04
+```
+print('測試集的結果', round(score, 3))
+```
+## Error 05
+```
+# print('測試集的結果', score.round(3))
+print('測試集的結果', round(score, 3))
+```
+
