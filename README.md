@@ -166,6 +166,8 @@
 - 教學內容：
   - 完整建模流程、class_weight、向下取樣、向上取樣
   - AI 輔助不均衡資料處理
+- SUP
+  - [14 Employee Churn-Revision](https://colab.research.google.com/drive/1pUGOLPiH2AhSUGOjR2BIG8iDfo9dq30m)
 
 ### 第 13 週｜文字處理與商品評論分析
 

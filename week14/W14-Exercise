@@ -1,10 +1,5 @@
-# 第 14 週｜作業
-- 修改課本第12章程式碼，運用AI製作修改程式記錄的MD檔
-  - 修改了什麼
-  - 該程式區塊的功能說明
-- 放置於README.MD中
-
 # W14-Exercise
+
 ## Error01
 ValueError: could not convert string to float: 'sales' 表示 df.corr() 方法嘗試對非數值型資料（特別是 'sales' 欄位，它包含字串值）計算相關性。corr() 方法只能處理數值型資料。
 為了解決這個問題，我修改了程式碼，在 df.corr() 方法中添加了 numeric_only=True。這樣做會指示 corr() 方法只考慮資料框中的數值型欄位來計算相關性，從而避免了嘗試將字串轉換為浮點數的錯誤。
@@ -18,9 +13,3 @@ sns.heatmap(df.corr(numeric_only=True).round(2), annot=True, cmap='coolwarm');
 - sns.heatmap(...): 使用 Seaborn 函式庫中的 heatmap 函式來繪製熱力圖。
 - annot=True: 在熱力圖的每個單元格中顯示相關係數的數值。
 - cmap='coolwarm': 設定熱力圖的顏色映射。'coolwarm' 是一種常見的色譜，通常用於表示正相關（暖色）和負相關（冷色），並且中間色表示接近零的相關性。
-## Error02
-
-```
-# df.drop('left', axis=1).corrwith(df['left']).round(2)
-df.drop('left', axis=1).select_dtypes(include=np.number).corrwith(df['left']).round(2)
-```
