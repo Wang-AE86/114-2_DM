@@ -1,0 +1,15 @@
+# W14-Exercise
+
+## Error01
+ValueError: could not convert string to float: 'sales' 表示 df.corr() 方法嘗試對非數值型資料（特別是 'sales' 欄位，它包含字串值）計算相關性。corr() 方法只能處理數值型資料。
+為了解決這個問題，我修改了程式碼，在 df.corr() 方法中添加了 numeric_only=True。這樣做會指示 corr() 方法只考慮資料框中的數值型欄位來計算相關性，從而避免了嘗試將字串轉換為浮點數的錯誤。
+```
+#sns.heatmap(df.corr().round(2), annot=True, cmap='coolwarm');
+sns.heatmap(df.corr(numeric_only=True).round(2), annot=True, cmap='coolwarm');
+```
+這行程式碼的目的是繪製一個相關性熱力圖（heatmap），用來視覺化資料框 df 中各數值型欄位之間的相關性。具體來說：
+- df.corr(numeric_only=True): 計算資料框 df 中所有數值型欄位之間的皮爾遜相關係數。numeric_only=True 確保只對數值型欄位進行計算，避免非數值型欄位導致的錯誤。
+- .round(2): 將相關係數的結果四捨五入到小數點後兩位，使圖表更易讀
+- sns.heatmap(...): 使用 Seaborn 函式庫中的 heatmap 函式來繪製熱力圖。
+- annot=True: 在熱力圖的每個單元格中顯示相關係數的數值。
+- cmap='coolwarm': 設定熱力圖的顏色映射。'coolwarm' 是一種常見的色譜，通常用於表示正相關（暖色）和負相關（冷色），並且中間色表示接近零的相關性。
