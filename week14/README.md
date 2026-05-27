@@ -18,3 +18,9 @@ sns.heatmap(df.corr(numeric_only=True).round(2), annot=True, cmap='coolwarm');
 - sns.heatmap(...): 使用 Seaborn 函式庫中的 heatmap 函式來繪製熱力圖。
 - annot=True: 在熱力圖的每個單元格中顯示相關係數的數值。
 - cmap='coolwarm': 設定熱力圖的顏色映射。'coolwarm' 是一種常見的色譜，通常用於表示正相關（暖色）和負相關（冷色），並且中間色表示接近零的相關性。
+## Error02
+
+```
+# df.drop('left', axis=1).corrwith(df['left']).round(2)
+df.drop('left', axis=1).select_dtypes(include=np.number).corrwith(df['left']).round(2)
+```
